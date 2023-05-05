@@ -13,7 +13,7 @@ local Confetti = require(PlayerScripts.Confetti)
 -------------------------------
 -- Sync up Checkpoint attribute
 
-local checkpointReached = New "BindableEvent" {}
+local checkpointReached = New("BindableEvent")({})
 
 local currentCheckpoint = Value(Players.LocalPlayer:GetAttribute("Checkpoint"))
 Players.LocalPlayer:GetAttributeChangedSignal("Checkpoint"):Connect(function()
@@ -24,17 +24,17 @@ end)
 ----------------
 -- Build main UI
 
-New "ScreenGui" {
+New("ScreenGui")({
 	Parent = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui"),
 	IgnoreGuiInset = true,
-	
+
 	[Children] = {
-		CheckpointUI {
-			Value = currentCheckpoint	
-		},
-		
-		Confetti {
-			Event = checkpointReached.Event
-		}
-	}
-}
+		CheckpointUI({
+			Value = currentCheckpoint,
+		}),
+
+		Confetti({
+			Event = checkpointReached.Event,
+		}),
+	},
+})

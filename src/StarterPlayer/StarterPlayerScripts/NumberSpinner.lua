@@ -27,78 +27,79 @@ local Spring = Fusion.Spring
 
 local function NumberSpinner(props)
 	local digits = {}
-	
-	for digitPosition=1, props.NumDigits do
+
+	for digitPosition = 1, props.NumDigits do
 		local fauxRotation = Spring(Computed(function()
 			-- each digit should move 10 times slower than the last, and needs
 			-- to snap to integer steps
-			return math.floor(props.Value:get() / 10^(digitPosition - 1))
+			return math.floor(props.Value:get() / 10 ^ (digitPosition - 1))
 		end))
-		
+
 		-- when the digit hasn't moved yet, fade it out for a cleaner look
 		local digitTransparency = Computed(function()
 			return math.clamp(1 - fauxRotation:get(), 0, 1) * 0.75
 		end)
-		
-		digits[digitPosition] = New "Frame" {
+
+		digits[digitPosition] = New("Frame")({
 			Name = "Digit" .. digitPosition,
-			
+
 			-- digits are written right to left
 			LayoutOrder = -digitPosition,
 			Size = UDim2.fromScale(0.6, 1),
 			SizeConstraint = "RelativeYY",
-			
+
 			BackgroundTransparency = 1,
-			
-			[Children] = New "Frame" {
+
+			[Children] = New("Frame")({
 				Name = "DigitMover",
-				
+
 				Position = Computed(function()
 					return UDim2.fromScale(0, -(fauxRotation:get() % 10))
 				end),
 				Size = UDim2.fromScale(1, 1),
 				BackgroundTransparency = 1,
-				
-				[Children] = ForPairs({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, function(index, digit)
-					return index, New "TextLabel" {
-						Name = "Label" .. index,
-						
-						Position = UDim2.fromScale(0, index - 1),
-						Size = UDim2.fromScale(1, 1),
-						BackgroundTransparency = 1,
-						
-						Font = props.Font,
-						Text = digit,
-						TextScaled = true,
-						TextColor3 = props.TextColor3,
-						TextTransparency = digitTransparency
-					}
-				end, Fusion.cleanup)
-			}
-		}
+
+				[Children] = ForPairs({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }, function(index, digit)
+					return index,
+						New("TextLabel")({
+							Name = "Label" .. index,
+
+							Position = UDim2.fromScale(0, index - 1),
+							Size = UDim2.fromScale(1, 1),
+							BackgroundTransparency = 1,
+
+							Font = props.Font,
+							Text = digit,
+							TextScaled = true,
+							TextColor3 = props.TextColor3,
+							TextTransparency = digitTransparency,
+						})
+				end, Fusion.cleanup),
+			}),
+		})
 	end
-	
-	return New "Frame" {
+
+	return New("Frame")({
 		Name = "NumberSpinner",
-		
+
 		Position = props.Position,
 		AnchorPoint = props.AnchorPoint,
 		Size = props.Size,
-		
+
 		BackgroundTransparency = 1,
 		ClipsDescendants = true,
-		
+
 		[Children] = {
-			New "UIListLayout" {
+			New("UIListLayout")({
 				SortOrder = "LayoutOrder",
 				FillDirection = "Horizontal",
 				HorizontalAlignment = "Center",
-				VerticalAlignment = "Center"
-			},
-			
-			digits
-		}
-	}
+				VerticalAlignment = "Center",
+			}),
+
+			digits,
+		},
+	})
 end
 
 return NumberSpinner
